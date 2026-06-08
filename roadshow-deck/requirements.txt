@@ -1,0 +1,7 @@
+# roadshow-deck — single-file HTML deck builder.
+# HTML rendering + validation use ONLY the Python standard library. No install needed.
+#
+# --- Optional image-generation backends (install only the one(s) you use) ---
+# openai>=1.30          # OpenAI gpt-image
+# google-genai>=0.3     # Google Gemini / Imagen
+# requests>=2.31        # generic HTTP backends (Stability, fal, Qwen, Seedream, ...)

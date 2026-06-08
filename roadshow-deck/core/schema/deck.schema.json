@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://roadshow-deck/schema/deck.schema.json",
+  "title": "Roadshow Deck Spec",
+  "description": "Single intermediate representation consumed by the HTML renderer. Authored by the host model after the ingest -> structure -> audience -> narrative pipeline.",
+  "type": "object",
+  "required": ["meta", "sections", "slides"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title", "audience"],
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "author": { "type": "string" },
+        "org": { "type": "string" },
+        "date": { "type": "string" },
+        "language": { "type": "string", "default": "zh" },
+        "audience": {
+          "type": "string",
+          "description": "Primary audience; drives narrative ordering and emphasis.",
+          "enum": ["board", "group", "line-manager", "dept-manager", "external-exec", "external-operator", "technical", "general", "mixed"]
+        },
+        "audience_note": { "type": "string", "description": "Free-text nuance, e.g. '直接分管副总，关注本条线KPI'." },
+        "occasion": { "type": "string" },
+        "duration_min": { "type": "number" },
+        "expertise": { "type": "string", "enum": ["novice", "informed", "expert"], "default": "informed" },
+        "aspect": { "type": "string", "enum": ["16:9", "4:3"], "default": "16:9" },
+        "style": { "type": "string", "description": "Visual style id from the styles/ library, chosen by content (see method/06): swiss | editorial | corporate | consulting | minimal | tech | bold." },
+        "theme": { "type": "string", "description": "Deprecated alias of style." }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "description": "Top-level outline; source of breadcrumbs / current-level indicator.",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "slides"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "slides": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/slide" }
+    },
+    "appendix": {
+      "type": "array",
+      "description": "IDs of appendix slides (live after the body, same file). Referenced by slide.links[].target.",
+      "items": { "type": "string" }
+    },
+    "navigation": {
+      "type": "object",
+      "properties": {
+        "return": { "type": "string", "enum": ["to-origin", "none"], "default": "to-origin" },
+        "show_breadcrumb": { "type": "boolean", "default": true },
+        "show_progress": { "type": "boolean", "default": true }
+      }
+    }
+  },
+  "$defs": {
+    "slide": {
+      "type": "object",
+      "required": ["id", "kind"],
+      "properties": {
+        "id": { "type": "string" },
+        "section": { "type": "string", "description": "Section id this slide belongs to (for breadcrumb)." },
+        "kind": { "type": "string", "enum": ["cover", "agenda", "section-divider", "content", "appendix", "back"] },
+        "tag": { "type": "string", "description": "Small eyebrow label above the headline." },
+        "headline": { "type": "string", "description": "Assertion-style full-sentence title (the page's single claim)." },
+        "subhead": { "type": "string" },
+        "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+        "links": { "type": "array", "items": { "$ref": "#/$defs/link" } },
+        "notes": { "type": "string", "description": "Speaker notes." }
+      }
+    },
+    "link": {
+      "type": "object",
+      "required": ["label", "target"],
+      "description": "A non-linear jump from a body slide to a detail/appendix slide; renderer adds a Return control.",
+      "properties": {
+        "label": { "type": "string" },
+        "target": { "type": "string", "description": "Target slide id." },
+        "type": { "type": "string", "enum": ["detail", "appendix", "ref"], "default": "detail" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["heading", "paragraph", "bullets", "kpi", "table", "compare", "timeline", "process", "quote", "callout", "image", "two-col", "spacer"]
+        },
+        "text": { "type": "string" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "items": {
+          "type": "array",
+          "description": "Bullet/process items. Each item is a string or {text, sub:[...]}.",
+          "items": {}
+        },
+        "columns": { "type": "array", "items": { "type": "string" } },
+        "rows": { "type": "array", "items": { "type": "array", "items": {} } },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "label": { "type": "string" },
+              "delta": { "type": "string" }
+            }
+          }
+        },
+        "left": { "type": "object" },
+        "right": { "type": "object" },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": { "time": { "type": "string" }, "text": { "type": "string" } }
+          }
+        },
+        "src": { "type": "string", "description": "Image path/data-uri (optional)." },
+        "alt": { "type": "string" },
+        "caption": { "type": "string" },
+        "gen": {
+          "type": "object",
+          "description": "Optional image-generation request (used when src is absent and image gen is enabled).",
+          "properties": {
+            "prompt": { "type": "string" },
+            "style": { "type": "string" },
+            "transparent": { "type": "boolean" },
+            "need_text": { "type": "boolean", "default": false }
+          }
+        },
+        "variant": { "type": "string", "description": "Style hint, e.g. callout: info|highlight|warn|risk." },
+        "emphasis": { "type": "string", "enum": ["normal", "strong"], "default": "normal" },
+        "height": { "type": "number", "description": "Spacer height in pt." }
+      }
+    }
+  }
+}

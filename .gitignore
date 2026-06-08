@@ -1,0 +1,18 @@
+# ── dev / build artifacts (not part of the published skill) ──
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# IDE / assistant local files
+.specstory/
+.cursorindexingignore
+.vscode/
+
+# Validation scratch + archived process notes (kept locally, not published)
+work/
+docs/_local/
+
+# Generated deck outputs — publish only the canonical sample
+roadshow-deck/examples/out/*
+!roadshow-deck/examples/out/sample-source.deck.html

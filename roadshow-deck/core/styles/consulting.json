@@ -1,0 +1,21 @@
+{
+  "name": "consulting",
+  "title": "咨询数据 Consulting",
+  "summary": "浅色、蓝灰、图表导向；分析清晰、结构化。",
+  "mode": "light",
+  "look": "clean",
+  "palette": {
+    "bg": "#FFFFFF", "surface": "#F2F5F9", "surface_alt": "#E5ECF4",
+    "text": "#14233A", "muted": "#5B6B82", "primary": "#1F6FB2", "accent": "#CC5A2E",
+    "accent_on": "#FFFFFF", "primary_on": "#FFFFFF", "line": "#D2DCE8",
+    "feature_bg": "#14233A", "feature_text": "#F2F5F9",
+    "ok": "#2E9E6B", "warn": "#C9851F", "bad": "#C7493F"
+  },
+  "fit": {
+    "domains": ["data", "analysis", "report", "operations", "research", "consulting"],
+    "tones": ["analytical", "clear", "structured"],
+    "audiences": ["dept-manager", "line-manager", "external-exec", "technical"],
+    "data_density": "high",
+    "keywords": ["分析", "数据", "报告", "指标", "调研", "运营", "流程", "对比", "增长", "诊断"]
+  }
+}

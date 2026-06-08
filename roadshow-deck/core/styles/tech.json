@@ -1,0 +1,22 @@
+{
+  "name": "tech",
+  "title": "科技产品 Tech",
+  "summary": "深色、冷色青/蓝强调、无衬线；现代、产品/AI 发布感。",
+  "mode": "dark",
+  "look": "clean",
+  "palette": {
+    "bg": "#0B1220", "surface": "#131C2E", "surface_alt": "#1B2740",
+    "text": "#EAF1FB", "muted": "#9FB0C8", "primary": "#36D6C0", "accent": "#4F8CFF",
+    "accent_on": "#06121A", "primary_on": "#06121A", "line": "#243450",
+    "feature_bg": "#070D18", "feature_text": "#EAF1FB",
+    "ok": "#3FB68B", "warn": "#E0913A", "bad": "#FF6B6B"
+  },
+  "fonts": { "html_sans": "'Inter','Helvetica Neue',-apple-system,Arial,sans-serif" },
+  "fit": {
+    "domains": ["ai", "saas", "product", "startup", "tech", "software", "demo"],
+    "tones": ["modern", "innovative", "energetic"],
+    "audiences": ["technical", "external-exec", "external-operator", "board"],
+    "data_density": "mid",
+    "keywords": ["AI", "产品", "模型", "平台", "智能", "发布", "demo", "创业", "科技", "增长"]
+  }
+}

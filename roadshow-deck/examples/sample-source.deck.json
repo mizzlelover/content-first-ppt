@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "title": "智能运维巡检平台",
+    "subtitle": "从被动救火，到主动预防",
+    "author": "张工",
+    "org": "技术中台部",
+    "date": "2026-06",
+    "language": "zh",
+    "audience": "dept-manager",
+    "audience_note": "直接分管的部门经理，关注落地路径、排期与跨部门协作",
+    "occasion": "部门季度评审",
+    "duration_min": 15,
+    "expertise": "informed",
+    "aspect": "16:9",
+    "style": "consulting"
+  },
+  "sections": [
+    { "id": "s1", "title": "是什么", "slides": ["c1"] },
+    { "id": "s2", "title": "为什么现在", "slides": ["c2"] },
+    { "id": "s3", "title": "怎么做", "slides": ["d3", "c3"] },
+    { "id": "s4", "title": "凭什么是我们", "slides": ["c4"] },
+    { "id": "s5", "title": "怎么合作", "slides": ["c5"] }
+  ],
+  "appendix": ["a1"],
+  "navigation": { "return": "to-origin", "show_breadcrumb": true, "show_progress": true },
+  "slides": [
+    {
+      "id": "cover", "kind": "cover",
+      "headline": "智能运维巡检平台",
+      "subhead": "从被动救火，到主动预防",
+      "notes": "开场一句话点题：我们要把‘出了故障再修’变成‘故障发生前就预警’。"
+    },
+    {
+      "id": "agenda", "kind": "agenda",
+      "headline": "今天用 15 分钟讲清五件事",
+      "notes": "给出全局地图，让听众随时知道讲到哪。"
+    },
+    {
+      "id": "c1", "section": "s1", "kind": "content",
+      "tag": "是什么",
+      "headline": "一句话：给设备配一个 7×24 小时不下班的‘体检医生’。",
+      "blocks": [
+        { "type": "paragraph", "text": "平台持续采集设备运行数据，自动判断健康状态，在故障发生前发出预警并给出处置建议——把‘坏了再修’变成‘提前发现’。" },
+        { "type": "kpi", "metrics": [
+          { "value": "7×24", "label": "持续在线巡检" },
+          { "value": "−40%", "label": "非计划停机", "delta": "对比人工巡检" },
+          { "value": "3 类", "label": "自动预警等级" }
+        ] }
+      ],
+      "notes": "面向非专业者先讲清楚‘是什么’，消除信息不对称。"
+    },
+    {
+      "id": "c2", "section": "s2", "kind": "content",
+      "tag": "为什么现在",
+      "headline": "人工巡检已经撑不住设备规模的增长了。",
+      "blocks": [
+        { "type": "bullets", "items": [
+          "设备三年翻倍，巡检人手没有同步增长，覆盖率持续下降",
+          "故障平均发现滞后 4 小时以上，多为‘事后报修’",
+          "经验集中在少数老师傅身上，难复制、难传承"
+        ] }
+      ],
+      "notes": "用痛点制造紧迫感。"
+    },
+    {
+      "id": "d3", "section": "s3", "kind": "section-divider",
+      "headline": "怎么做",
+      "notes": "进入方案部分；暗色过渡页 + 巨号 03 给观众一个呼吸与定位。"
+    },
+    {
+      "id": "c3", "section": "s3", "kind": "content",
+      "tag": "怎么做",
+      "headline": "四步闭环：从采集到预警，再到处置与复盘。",
+      "blocks": [
+        { "type": "process", "items": [
+          { "text": "采集：边缘网关接入设备信号" },
+          { "text": "诊断：模型实时判断健康度" },
+          { "text": "预警：分级推送+处置建议" },
+          { "text": "复盘：闭环沉淀为知识库" }
+        ] }
+      ],
+      "links": [
+        { "label": "展开：技术实现与算法细节", "target": "a1", "type": "detail" }
+      ],
+      "notes": "如果被问到技术细节，点开附录 a1，讲完按‘返回’回到这页。"
+    },
+    {
+      "id": "c4", "section": "s4", "kind": "content",
+      "tag": "凭什么是我们",
+      "headline": "我们已经跑通了从 0 到 1，不是从 PPT 开始。",
+      "blocks": [
+        { "type": "compare",
+          "left":  { "title": "我们的方案", "items": ["已在 2 条产线试点 6 个月", "复用现有边缘网关，改造成本低", "预警准确率 92%"] },
+          "right": { "title": "传统外采", "items": ["从零部署，周期 6–9 个月", "需新增硬件投入", "通用模型，需长期调优"] }
+        }
+      ],
+      "notes": "用对比凸显差异化优势。"
+    },
+    {
+      "id": "c5", "section": "s5", "kind": "content",
+      "tag": "怎么合作",
+      "headline": "建议先用一条产线做 8 周试点，跑出数据再决定推广。",
+      "blocks": [
+        { "type": "callout", "variant": "highlight", "text": "诉求：希望部门支持协调 1 条试点产线 + 2 名运维同事配合，预算在现有运维框架内。" },
+        { "type": "bullets", "items": [
+          "第 1–2 周：接入与基线采集",
+          "第 3–6 周：模型上线与预警校准",
+          "第 7–8 周：效果评估与推广方案"
+        ] }
+      ],
+      "notes": "给出明确、低门槛的下一步。"
+    },
+    {
+      "id": "a1", "kind": "appendix",
+      "tag": "附录",
+      "headline": "技术实现：边缘采集 + 云端诊断的三层架构。",
+      "blocks": [
+        { "type": "table",
+          "columns": ["层级", "职责", "关键技术"],
+          "rows": [
+            ["边缘层", "信号采集与预处理", "工业网关 / 时序缓存"],
+            ["诊断层", "健康度判定与异常检测", "时序模型 / 阈值+学习双引擎"],
+            ["应用层", "分级预警与知识沉淀", "规则引擎 / 处置知识库"]
+          ]
+        }
+      ],
+      "notes": "这是被问到才展开的深度内容；讲完点‘返回’。"
+    },
+    {
+      "id": "end", "kind": "back",
+      "headline": "让设备开口说话，让故障提前一步被看见。",
+      "subhead": "期待用一条产线的 8 周，证明它值得推广。"
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+<!doctype html><html lang='zh'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>智能运维巡检平台</title><style>:root{--bg:#FFFFFF;--surface:#F2F5F9;--surface-alt:#E5ECF4;--text:#14233A;--muted:#5B6B82;--primary:#1F6FB2;--accent:#CC5A2E;--accent-on:#FFFFFF;--primary-on:#FFFFFF;--line:#D2DCE8;--feature-bg:#14233A;--feature-text:#F2F5F9;--ok:#2E9E6B;--warn:#C9851F;--bad:#C7493F;--secondary:#5B6B82;--helper:color-mix(in srgb, var(--muted) 70%, var(--bg));--tint:color-mix(in srgb, var(--surface) 55%, var(--bg));--font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif, 'PingFang SC','Microsoft YaHei','Source Han Sans SC','Noto Sans SC',sans-serif;--font-serif:'Playfair Display','Source Serif 4',Georgia,'Times New Roman',serif, 'Songti SC','Source Han Serif SC','Noto Serif SC','SimSun',serif;--font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;--font-head:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif, 'PingFang SC','Microsoft YaHei','Source Han Sans SC','Noto Sans SC',sans-serif;--font-num:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif, 'PingFang SC','Microsoft YaHei','Source Han Sans SC','Noto Sans SC',sans-serif;--w-cover:800;--w-div:800;--w-head:700;--w-sub:600;--w-body:400;--w-kpi:800;--w-label:600;--w-quote:600;--w-callout:600;--radius:10.0px;--fs-cover-title:69.33px;--fs-cover-sub:33.33px;--fs-section:61.33px;--fs-headline:48.0px;--fs-subhead:30.67px;--fs-body:32.0px;--fs-bullet:32.0px;--fs-kpi:80.0px;--fs-kpi-label:18.67px;--fs-table:24.0px;--fs-table-h:20.0px;--fs-quote:37.33px;--fs-callout:30.67px;--fs-caption:20.0px;--fs-tag:17.33px;--fs-crumb:17.33px;--fs-foot:16.0px;--fs-page:17.33px;--pad-x:74.67px;--pad-top:40.0px;--pad-bottom:37.33px}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#06080c;overflow:hidden;font-family:var(--font-sans);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#deck{width:1280px;height:720px;position:relative;transform-origin:center center;
+      background:var(--bg);color:var(--text);overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;
+       padding:var(--pad-top) var(--pad-x) var(--pad-bottom) var(--pad-x)}
+.slide.active{display:flex}
+.slide.feat{background:var(--feature-bg);color:var(--feature-text)}
+.slide>*{position:relative;z-index:1}
+
+/* ---- editorial labels (mono, tracked) ---- */
+.label{font-family:var(--font-mono);font-weight:var(--w-label);text-transform:uppercase}
+.crumbbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--font-mono);
+  font-size:var(--fs-crumb);font-weight:var(--w-label);letter-spacing:.16em;color:var(--muted);
+  border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:18px}
+.crumb{opacity:.5;white-space:nowrap;text-transform:uppercase}
+.crumb.active{opacity:1;color:var(--accent)}
+.crumb.appx{opacity:1;color:var(--primary)}
+.crumb-dot{opacity:.3}
+
+.head{flex:0 0 auto;margin-bottom:20px}
+.kicker{font-family:var(--font-mono);font-weight:var(--w-label);font-size:var(--fs-tag);
+  letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;
+  display:inline-flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--accent)}
+.tag{display:inline-block;font-family:var(--font-mono);font-weight:var(--w-label);font-size:var(--fs-tag);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);
+  padding:5px 12px;margin-bottom:16px}
+.headline{font-family:var(--font-head);font-weight:var(--w-head);font-size:var(--fs-headline);
+  line-height:1.16;letter-spacing:-.005em;color:inherit}
+.subhead{font-family:var(--font-sans);font-weight:var(--w-sub);font-size:var(--fs-subhead);
+  color:var(--secondary);margin-top:12px;line-height:1.4;max-width:46em}
+.big,.headline,.sectitle{text-wrap:balance}
+
+/* content body fills the space below the head; .cfit holds the blocks and is the
+   unit that auto-scales to fit (see fitSlide() in JS) so nothing is ever clipped. */
+.cbody{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;
+         min-height:0;overflow:hidden;font-size:var(--fs-body);line-height:1.5}
+.cbody.top{justify-content:flex-start}
+.cfit{display:flex;flex-direction:column;gap:20px;width:100%;transform-origin:top left}
+p.par{font-size:var(--fs-body);line-height:1.6;color:var(--secondary);max-width:38em}
+
+/* bullets — square marker, no box */
+ul.bul{list-style:none;display:flex;flex-direction:column;gap:16px;max-width:42em}
+ul.bul>li{position:relative;padding-left:28px;font-size:var(--fs-bullet);line-height:1.5;font-weight:var(--w-body)}
+ul.bul>li:before{content:"";position:absolute;left:2px;top:.6em;width:9px;height:9px;background:var(--accent)}
+ul.sub{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+ul.sub>li{position:relative;padding-left:22px;font-size:calc(var(--fs-bullet)*.84);color:var(--helper)}
+ul.sub>li:before{content:"—";position:absolute;left:2px;color:var(--accent)}
+
+/* agenda — numbered outline (no breadcrumb duplication) */
+ol.agenda{list-style:none;display:flex;flex-direction:column}
+ol.agenda li{display:flex;align-items:baseline;gap:28px;padding:16px 0;border-bottom:1px solid var(--line)}
+ol.agenda li:first-child{border-top:1px solid var(--line)}
+ol.agenda .n{font-family:var(--font-num);font-weight:var(--w-kpi);font-size:calc(var(--fs-headline)*.9);
+  color:var(--accent);line-height:1;font-feature-settings:"tnum";min-width:1.8em}
+ol.agenda .t{font-size:var(--fs-subhead);font-weight:600;line-height:1.2}
+
+/* KPI — Carbon stat card: thin accent top-border, mono caps label, big tnum number */
+.kpis{display:flex;gap:32px;flex-wrap:wrap;align-items:stretch}
+.kpi{flex:1 1 0;min-width:150px;display:flex;flex-direction:column;border-top:2px solid var(--accent);padding-top:16px}
+.kpi .num{font-family:var(--font-num);font-weight:var(--w-kpi);font-size:var(--fs-kpi);color:inherit;
+  line-height:.9;letter-spacing:-.03em;font-feature-settings:"tnum";white-space:nowrap}
+.kpi .num .u{font-size:.42em;font-weight:500;color:var(--helper);margin:0 .04em;letter-spacing:0}
+.kpi .lab{font-family:var(--font-mono);font-weight:var(--w-label);font-size:var(--fs-kpi-label);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--helper);margin-top:16px;line-height:1.4}
+.kpi .delta{font-size:var(--fs-kpi-label);margin-top:6px;color:var(--ok)}
+
+/* table — Carbon hairline rows, flush-left */
+table.tbl{width:100%;border-collapse:collapse;font-size:var(--fs-table)}
+table.tbl th,table.tbl td{border-bottom:1px solid var(--line);padding:13px 20px;text-align:left;vertical-align:top;line-height:1.45}
+table.tbl th:first-child,table.tbl td:first-child{padding-left:0}
+table.tbl th:last-child,table.tbl td:last-child{padding-right:0}
+table.tbl th{font-family:var(--font-mono);font-weight:700;font-size:var(--fs-table-h);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--helper);border-bottom:1.5px solid var(--muted)}
+table.tbl td{color:var(--secondary)}
+table.tbl td:first-child{color:inherit;font-weight:500}
+
+/* compare / two-col — hairline framed (squared, Swiss) */
+.cols{display:flex;gap:24px}
+.col{flex:1 1 0;border:1px solid var(--line);padding:24px 26px;background:var(--tint)}
+.col h3{font-family:var(--font-sans);font-weight:700;font-size:var(--fs-subhead);margin-bottom:16px;color:inherit}
+.col.win{border-top:3px solid var(--accent)}
+.col.win h3{color:var(--accent)}
+.col ul.bul{gap:12px}
+.col ul.bul>li{font-size:calc(var(--fs-body)*.96)}
+
+/* process — numbered steps, hairline top */
+.proc{display:flex;gap:24px;align-items:stretch}
+.step{flex:1 1 0;border-top:2px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.step .n{font-family:var(--font-num);font-weight:var(--w-kpi);font-size:calc(var(--fs-headline)*0.92);
+  color:var(--accent);line-height:.9;letter-spacing:-.02em;font-feature-settings:"tnum"}
+.step .tx{font-size:calc(var(--fs-body)*.94);line-height:1.45;color:var(--secondary)}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:14px}
+.tl .row{display:flex;gap:18px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:12px}
+.tl .t{flex:0 0 150px;font-family:var(--font-mono);font-weight:600;letter-spacing:.04em;color:var(--primary)}
+
+/* quote / callout */
+blockquote.q{border-left:3px solid var(--accent);padding:4px 24px;font-family:var(--font-head);
+  font-weight:var(--w-quote);font-size:var(--fs-quote);line-height:1.45;font-style:italic;color:var(--text)}
+.callout{background:var(--tint);border-left:4px solid var(--primary);
+  padding:20px 26px;font-size:var(--fs-callout);font-weight:var(--w-callout);line-height:1.5;color:var(--text)}
+.callout.highlight{border-left-color:var(--accent)}
+.callout.risk,.callout.warn{border-left-color:var(--warn)}
+.callout.bad{border-left-color:var(--bad)}
+
+/* image */
+.fig{display:flex;flex-direction:column;align-items:center;gap:8px}
+.fig img{max-width:100%;max-height:380px;border-radius:var(--radius);border:1px solid var(--line);object-fit:cover}
+.fig .ph{width:100%;height:240px;border:1.5px dashed var(--line);border-radius:var(--radius);display:flex;
+  align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-mono);
+  font-size:var(--fs-caption);letter-spacing:.1em}
+.fig .cap{font-family:var(--font-mono);font-size:var(--fs-caption);letter-spacing:.06em;color:var(--muted)}
+
+/* footer: non-linear jump + return + page number */
+.footer{flex:0 0 auto;display:flex;align-items:center;gap:12px;margin-top:14px;
+        border-top:1px solid var(--line);padding-top:10px}
+.jump{font-family:var(--font-mono);font-size:var(--fs-foot);letter-spacing:.1em;color:var(--accent);
+  background:transparent;border:1px solid var(--accent);padding:7px 14px;cursor:pointer}
+.jump:before{content:"\2197  "}
+.ret{font-family:var(--font-mono);font-size:var(--fs-foot);letter-spacing:.1em;color:var(--accent);
+  background:transparent;border:1px solid var(--accent);padding:7px 14px;cursor:pointer}
+.ret:before{content:"\2190  "}
+.spacerf{flex:1 1 auto}
+.pagenum{font-family:var(--font-mono);font-size:var(--fs-page);letter-spacing:.16em;color:var(--helper)}
+
+/* cover / divider / back (feature slides) */
+.slide.cover{justify-content:center;align-items:flex-start}
+.cover .big{font-family:var(--font-head);font-weight:var(--w-cover);font-size:var(--fs-cover-title);
+  line-height:1.12;letter-spacing:-.015em;max-width:20em}
+.cover .cov-rule{width:56px;height:3px;background:var(--accent);margin-top:28px}
+.cover .sub{font-family:var(--font-head);font-weight:var(--w-sub);font-size:var(--fs-cover-sub);
+  opacity:.82;margin-top:20px;max-width:34em;line-height:1.4}
+.cover .metaline{font-family:var(--font-mono);font-size:var(--fs-foot);letter-spacing:.2em;
+  text-transform:uppercase;opacity:.55;margin-top:36px}
+.slide.back{justify-content:center;align-items:flex-start}
+.slide.divider{justify-content:center}
+.divider .secidx{font-family:var(--font-num);font-weight:var(--w-div);font-size:var(--fs-cover-sub);
+  color:var(--accent);font-feature-settings:"tnum"}
+.divider .sectitle{font-family:var(--font-head);font-weight:var(--w-div);font-size:var(--fs-section);
+  margin-top:12px;line-height:1.12;letter-spacing:-.01em}
+.ghost{position:absolute;right:48px;bottom:-40px;font-family:var(--font-num);font-weight:800;
+  font-size:340px;line-height:.8;color:var(--feature-text);opacity:.045;font-feature-settings:"tnum";z-index:0}
+.hint{position:fixed;right:14px;bottom:10px;color:#3a4658;font-family:monospace;font-size:12px;z-index:10}
+
+/* page preview / index overlay — toggled with Enter (click a thumb to jump) */
+#ov{position:fixed;inset:0;z-index:50;display:none;overflow:auto;background:rgba(6,8,12,.93);
+    padding:52px 40px;grid-template-columns:repeat(auto-fill,280px);gap:24px 26px;
+    justify-content:center;align-content:start}
+body.ov #ov{display:grid}
+.ovcell{cursor:pointer}
+.ovmini{width:280px;height:157.5px;overflow:hidden;background:var(--bg);border:2px solid #2a3340;border-radius:4px;position:relative}
+.ovcell:hover .ovmini,.ovcell.cur .ovmini{border-color:var(--accent)}
+.ovmini .slide{position:absolute;left:0;top:0;width:1280px;height:720px;display:flex;
+    transform:scale(.21875);transform-origin:top left;pointer-events:none}
+.ovnum{margin-top:7px;text-align:center;font-family:var(--font-mono);font-size:13px;color:#9aa6b6;letter-spacing:.08em}
+.ovcell.cur .ovnum{color:var(--accent)}
+#ovhint{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:51;display:none;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;color:#9aa6b6;text-transform:uppercase}
+body.ov #ovhint{display:block}
+</style></head><body><div id='stage'><div id='deck'><section class='slide cover feat ' id='cover'><div class='big'>智能运维巡检平台</div><div class='cov-rule'></div><div class='sub'>从被动救火，到主动预防</div><div class='metaline'>技术中台部 · 张工 · 2026-06</div></section><section class='slide' id='agenda'><div class='head'><h1 class='headline'>今天用 15 分钟讲清五件事</h1></div><div class='cbody'><div class='cfit'><ol class='agenda'><li><span class='n'>01</span><span class='t'>是什么</span></li><li><span class='n'>02</span><span class='t'>为什么现在</span></li><li><span class='n'>03</span><span class='t'>怎么做</span></li><li><span class='n'>04</span><span class='t'>凭什么是我们</span></li><li><span class='n'>05</span><span class='t'>怎么合作</span></li></ol></div></div><div class='footer'><div class='spacerf'></div><div class='pagenum'>02 / 10</div></div></section><section class='slide' id='c1'><div class='crumbbar'><span class='crumb active'>是什么</span><span class='crumb-dot'>/</span><span class='crumb'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb'>怎么合作</span></div><div class='head'><div class='kicker'>是什么</div><h1 class='headline'>一句话：给设备配一个 7×24 小时不下班的‘体检医生’。</h1></div><div class='cbody'><div class='cfit'><p class='par'>平台持续采集设备运行数据，自动判断健康状态，在故障发生前发出预警并给出处置建议——把‘坏了再修’变成‘提前发现’。</p><div class='kpis'><div class='kpi'><div class='num'>7<span class='u'>×24</span></div><div class='lab'>持续在线巡检</div></div><div class='kpi'><div class='num'><span class='u'>−</span>40<span class='u'>%</span></div><div class='lab'>非计划停机</div><div class='delta'>对比人工巡检</div></div><div class='kpi'><div class='num'>3<span class='u'> 类</span></div><div class='lab'>自动预警等级</div></div></div></div></div><div class='footer'><div class='spacerf'></div><div class='pagenum'>03 / 10</div></div></section><section class='slide' id='c2'><div class='crumbbar'><span class='crumb'>是什么</span><span class='crumb-dot'>/</span><span class='crumb active'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb'>怎么合作</span></div><div class='head'><div class='kicker'>为什么现在</div><h1 class='headline'>人工巡检已经撑不住设备规模的增长了。</h1></div><div class='cbody'><div class='cfit'><ul class='bul'><li>设备三年翻倍，巡检人手没有同步增长，覆盖率持续下降</li><li>故障平均发现滞后 4 小时以上，多为‘事后报修’</li><li>经验集中在少数老师傅身上，难复制、难传承</li></ul></div></div><div class='footer'><div class='spacerf'></div><div class='pagenum'>04 / 10</div></div></section><section class='slide divider feat ' id='d3'><div class='crumbbar'><span class='crumb'>是什么</span><span class='crumb-dot'>/</span><span class='crumb'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb active'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb'>怎么合作</span></div><div class='ghost'>03</div><div class='secidx'>03</div><div class='sectitle'>怎么做</div></section><section class='slide' id='c3'><div class='crumbbar'><span class='crumb'>是什么</span><span class='crumb-dot'>/</span><span class='crumb'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb active'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb'>怎么合作</span></div><div class='head'><div class='kicker'>怎么做</div><h1 class='headline'>四步闭环：从采集到预警，再到处置与复盘。</h1></div><div class='cbody'><div class='cfit'><div class='proc'><div class='step'><span class='n'>01</span><span class='tx'>采集：边缘网关接入设备信号</span></div><div class='step'><span class='n'>02</span><span class='tx'>诊断：模型实时判断健康度</span></div><div class='step'><span class='n'>03</span><span class='tx'>预警：分级推送+处置建议</span></div><div class='step'><span class='n'>04</span><span class='tx'>复盘：闭环沉淀为知识库</span></div></div></div></div><div class='footer'><button class='jump' onclick="jump('a1')">展开：技术实现与算法细节</button><div class='spacerf'></div><div class='pagenum'>06 / 10</div></div></section><section class='slide' id='c4'><div class='crumbbar'><span class='crumb'>是什么</span><span class='crumb-dot'>/</span><span class='crumb'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb active'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb'>怎么合作</span></div><div class='head'><div class='kicker'>凭什么是我们</div><h1 class='headline'>我们已经跑通了从 0 到 1，不是从 PPT 开始。</h1></div><div class='cbody'><div class='cfit'><div class='cols'><div class='col win'><h3>我们的方案</h3><ul class='bul'><li>已在 2 条产线试点 6 个月</li><li>复用现有边缘网关，改造成本低</li><li>预警准确率 92%</li></ul></div><div class='col'><h3>传统外采</h3><ul class='bul'><li>从零部署，周期 6–9 个月</li><li>需新增硬件投入</li><li>通用模型，需长期调优</li></ul></div></div></div></div><div class='footer'><div class='spacerf'></div><div class='pagenum'>07 / 10</div></div></section><section class='slide' id='c5'><div class='crumbbar'><span class='crumb'>是什么</span><span class='crumb-dot'>/</span><span class='crumb'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb active'>怎么合作</span></div><div class='head'><div class='kicker'>怎么合作</div><h1 class='headline'>建议先用一条产线做 8 周试点，跑出数据再决定推广。</h1></div><div class='cbody'><div class='cfit'><div class='callout highlight'>诉求：希望部门支持协调 1 条试点产线 + 2 名运维同事配合，预算在现有运维框架内。</div><ul class='bul'><li>第 1–2 周：接入与基线采集</li><li>第 3–6 周：模型上线与预警校准</li><li>第 7–8 周：效果评估与推广方案</li></ul></div></div><div class='footer'><div class='spacerf'></div><div class='pagenum'>08 / 10</div></div></section><section class='slide' id='a1'><div class='crumbbar'><span class='crumb'>是什么</span><span class='crumb-dot'>/</span><span class='crumb'>为什么现在</span><span class='crumb-dot'>/</span><span class='crumb'>怎么做</span><span class='crumb-dot'>/</span><span class='crumb'>凭什么是我们</span><span class='crumb-dot'>/</span><span class='crumb'>怎么合作</span><span class='crumb-dot'>/</span><span class='crumb appx'>附录 · APPENDIX</span></div><div class='head'><div class='kicker'>附录</div><h1 class='headline'>技术实现：边缘采集 + 云端诊断的三层架构。</h1></div><div class='cbody'><div class='cfit'><table class='tbl'><thead><tr><th>层级</th><th>职责</th><th>关键技术</th></tr></thead><tbody><tr><td>边缘层</td><td>信号采集与预处理</td><td>工业网关 / 时序缓存</td></tr><tr><td>诊断层</td><td>健康度判定与异常检测</td><td>时序模型 / 阈值+学习双引擎</td></tr><tr><td>应用层</td><td>分级预警与知识沉淀</td><td>规则引擎 / 处置知识库</td></tr></tbody></table></div></div><div class='footer'><button class='ret' onclick='back()'>返回 BACK</button><div class='spacerf'></div><div class='pagenum'>附录 APPENDIX</div></div></section><section class='slide back feat ' id='end'><div class='big' style='font-family:var(--font-head);font-weight:var(--w-cover);font-size:var(--fs-cover-title);line-height:1.1;letter-spacing:-.02em'>让设备开口说话，让故障提前一步被看见。</div><div class='sub' style='font-size:var(--fs-cover-sub);opacity:.78;margin-top:18px'>期待用一条产线的 8 周，证明它值得推广。</div></section></div></div><div id='ov'></div><div id='ovhint'>选择页面 · Enter / Esc 关闭</div><div class='hint'>← → 翻页 · Enter 索引 · Backspace 返回</div><script>
+var IDS = ["cover", "agenda", "c1", "c2", "d3", "c3", "c4", "c5", "a1", "end"];
+var stack = [];
+function curIdx(){var s=document.querySelector('.slide.active');return s?IDS.indexOf(s.id):0;}
+/* auto-fit: scale a slide's content block down ONLY if it would overflow, so the
+   deck never clips. Slides that fit keep their full (research-grounded) type size. */
+function fitSlide(el){if(!el)return;var cb=el.querySelector('.cbody');if(!cb)return;
+  var cf=cb.querySelector('.cfit');if(!cf)return;cf.style.transform='';cb.classList.remove('top');
+  var avail=cb.clientHeight,need=cf.scrollHeight;
+  if(need>avail+0.5){cb.classList.add('top');cf.style.transform='scale('+Math.max(0.5,avail/need).toFixed(4)+')';}}
+function show(i){if(i<0||i>=IDS.length)return;document.querySelectorAll('.slide').forEach(function(el){el.classList.remove('active');});
+  var el=document.getElementById(IDS[i]);el.classList.add('active');fitSlide(el);history.replaceState(null,'','#'+IDS[i]);}
+function goId(id){var i=IDS.indexOf(id);if(i>=0)show(i);}
+function jump(id){stack.push(IDS[curIdx()]);goId(id);}   /* non-linear: remember origin */
+function back(){if(stack.length){goId(stack.pop());}}     /* return to where you jumped from */
+function next(){show(curIdx()+1);}
+function prev(){show(curIdx()-1);}
+var OV=document.getElementById('ov');
+function buildOv(){
+  if(OV.dataset.built)return;
+  IDS.forEach(function(id,i){
+    var cell=document.createElement('div');cell.className='ovcell';cell.dataset.i=i;
+    var mini=document.createElement('div');mini.className='ovmini';
+    var clone=document.getElementById(id).cloneNode(true);clone.removeAttribute('id');
+    mini.appendChild(clone);
+    var num=document.createElement('div');num.className='ovnum';num.textContent=(i+1)+' / '+IDS.length;
+    cell.appendChild(mini);cell.appendChild(num);
+    cell.addEventListener('click',function(){var k=+this.dataset.i;closeOv();show(k);});
+    OV.appendChild(cell);
+  });
+  OV.dataset.built='1';
+}
+function markCur(){var c=curIdx();OV.querySelectorAll('.ovcell').forEach(function(el){el.classList.toggle('cur',+el.dataset.i===c);});}
+function openOv(){buildOv();markCur();document.body.classList.add('ov');var c=OV.querySelector('.ovcell.cur');if(c)c.scrollIntoView({block:'center'});}
+function closeOv(){document.body.classList.remove('ov');}
+function toggleOv(){document.body.classList.contains('ov')?closeOv():openOv();}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();toggleOv();return;}
+  if(e.key==='Escape'){closeOv();return;}
+  if(document.body.classList.contains('ov'))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next();}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+  else if(e.key==='Home'){show(0);}else if(e.key==='End'){show(IDS.length-1);}
+  else if(e.key==='Backspace'){e.preventDefault();back();}
+});
+function fit(){var d=document.getElementById('deck');var s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+  d.style.transform='scale('+s+')';}
+window.addEventListener('resize',fit);
+window.addEventListener('load',function(){fit();var h=location.hash.slice(1);if(h&&IDS.indexOf(h)>=0)goId(h);else show(0);});
+</script></body></html>

@@ -1,0 +1,22 @@
+{
+  "name": "editorial",
+  "title": "编辑杂志 Editorial",
+  "summary": "衬线大标题 + 无衬线正文 + 等宽标签；暖色、人文、叙事感。",
+  "mode": "light",
+  "look": "editorial",
+  "headline_family": "serif",
+  "palette": {
+    "bg": "#F4F1EA", "surface": "#EBE6DB", "surface_alt": "#E0D9C9",
+    "text": "#1A150E", "muted": "#6B6152", "primary": "#4A4036", "accent": "#9C5A2C",
+    "accent_on": "#FFFFFF", "primary_on": "#F4F1EA", "line": "#D8D0BF",
+    "feature_bg": "#1A150E", "feature_text": "#F4F1EA",
+    "ok": "#4E7A4E", "warn": "#B57F2A", "bad": "#B0492F"
+  },
+  "fit": {
+    "domains": ["humanities", "brand", "culture", "media", "story", "industry", "education"],
+    "tones": ["narrative", "warm", "reflective"],
+    "audiences": ["general", "external-exec", "external-operator"],
+    "data_density": "low",
+    "keywords": ["品牌", "故事", "文化", "行业", "观察", "理念", "人文", "趋势", "叙事", "愿景"]
+  }
+}

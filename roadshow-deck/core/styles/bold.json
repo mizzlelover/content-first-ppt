@@ -1,0 +1,22 @@
+{
+  "name": "bold",
+  "title": "强冲击 Bold",
+  "summary": "重磅字号、高反差、醒目强调；有号召力，适合融资/营销/愿景。",
+  "mode": "dark",
+  "look": "bold",
+  "palette": {
+    "bg": "#111114", "surface": "#1C1C22", "surface_alt": "#26262E",
+    "text": "#FFFFFF", "muted": "#B5B5C0", "primary": "#FF4D2E", "accent": "#FF4D2E",
+    "accent_on": "#FFFFFF", "primary_on": "#FFFFFF", "line": "#33333D",
+    "feature_bg": "#000000", "feature_text": "#FFFFFF",
+    "ok": "#3FB68B", "warn": "#FFC400", "bad": "#FF4D4D"
+  },
+  "fonts": { "html_sans": "'Inter','Helvetica Neue',-apple-system,Arial,sans-serif" },
+  "fit": {
+    "domains": ["pitch", "marketing", "vision", "launch", "campaign", "brand"],
+    "tones": ["bold", "persuasive", "energetic"],
+    "audiences": ["external-exec", "external-operator", "board", "group"],
+    "data_density": "low",
+    "keywords": ["愿景", "融资", "发布", "增长", "颠覆", "机会", "市场", "号召", "领先", "未来"]
+  }
+}

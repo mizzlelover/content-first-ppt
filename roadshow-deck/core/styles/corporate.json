@@ -1,0 +1,21 @@
+{
+  "name": "corporate",
+  "title": "商务管理层 Corporate",
+  "summary": "深色克制、稳重权威；无衬线、精炼金点缀。面向决策层。",
+  "mode": "dark",
+  "look": "clean",
+  "palette": {
+    "bg": "#0E1A2B", "surface": "#16263B", "surface_alt": "#1E3450",
+    "text": "#F4F8FC", "muted": "#A7BACE", "primary": "#5B9BD5", "accent": "#C9A227",
+    "accent_on": "#15233A", "primary_on": "#FFFFFF", "line": "#2A3D57",
+    "feature_bg": "#0A1422", "feature_text": "#F4F8FC",
+    "ok": "#3FB68B", "warn": "#E0913A", "bad": "#D9534F"
+  },
+  "fit": {
+    "domains": ["business", "strategy", "finance", "management", "corporate", "investment"],
+    "tones": ["serious", "credible", "authoritative"],
+    "audiences": ["board", "group", "line-manager", "dept-manager"],
+    "data_density": "mid",
+    "keywords": ["战略", "集团", "营收", "治理", "管理", "投资", "预算", "合规", "绩效", "汇报"]
+  }
+}

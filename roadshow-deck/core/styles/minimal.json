@@ -1,0 +1,22 @@
+{
+  "name": "minimal",
+  "title": "极简 Minimal",
+  "summary": "近黑白 + 单一强调、极致留白；中性、克制、通用安全。",
+  "mode": "light",
+  "look": "swiss",
+  "palette": {
+    "bg": "#FFFFFF", "surface": "#F6F6F6", "surface_alt": "#ECECEC",
+    "text": "#141414", "muted": "#6A6A6A", "primary": "#141414", "accent": "#E2483D",
+    "accent_on": "#FFFFFF", "primary_on": "#FFFFFF", "line": "#E2E2E2",
+    "feature_bg": "#141414", "feature_text": "#FFFFFF",
+    "ok": "#2E8B57", "warn": "#B8860B", "bad": "#C0392B"
+  },
+  "fonts": { "html_sans": "'Inter','Helvetica Neue',-apple-system,Arial,sans-serif" },
+  "fit": {
+    "domains": ["universal", "product", "general"],
+    "tones": ["neutral", "clean", "calm"],
+    "audiences": ["general", "technical", "external-operator", "external-exec", "board", "group", "line-manager", "dept-manager"],
+    "data_density": "any",
+    "keywords": []
+  }
+}

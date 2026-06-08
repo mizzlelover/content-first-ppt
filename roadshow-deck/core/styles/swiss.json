@@ -1,0 +1,22 @@
+{
+  "name": "swiss",
+  "title": "瑞士国际主义 Swiss",
+  "summary": "网格 · 无衬线 · 单一强调色 · 发丝线；理性、精确、信息驱动。",
+  "mode": "light",
+  "look": "swiss",
+  "palette": {
+    "bg": "#FAFAF8", "surface": "#F0F0EE", "surface_alt": "#E4E4E1",
+    "text": "#0A0A0A", "muted": "#6E6E6E", "primary": "#1A4FD6", "accent": "#1A4FD6",
+    "accent_on": "#FFFFFF", "primary_on": "#FFFFFF", "line": "#D4D4D2",
+    "feature_bg": "#0A0A0A", "feature_text": "#FAFAF8",
+    "ok": "#1F7A4D", "warn": "#B8770F", "bad": "#C0392B"
+  },
+  "fonts": { "html_sans": "'Inter','Helvetica Neue',-apple-system,Arial,sans-serif" },
+  "fit": {
+    "domains": ["tech", "engineering", "data", "design", "product", "ai"],
+    "tones": ["rational", "precise", "modern"],
+    "audiences": ["technical", "external-exec", "group", "board"],
+    "data_density": "high",
+    "keywords": ["架构", "系统", "算法", "指标", "平台", "数据", "工程", "模型", "技术", "标准"]
+  }
+}
